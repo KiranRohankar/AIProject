@@ -1,29 +1,45 @@
 
-(defun printcolumns(m)
-(loop for i from 0 to m do (princ "+")(princ " "))
+lumns(m)
+	(loop for i from 0 to m do 
+		(princ "+")
+		(princ "    ")
+
+
+	)
 )
 
-(defun printboard(n m)
-(loop for i from 0 to n do (printcolumns m)(terpri))
+(defun printboard(n m in-file)
+	(loop for i from 0 to n do 
+		(printcolumns m)
+		(terpri)
+		(setq lst (createlist in-file m 'nil))
+		(printnumbers lst  0)
+		(terpri)
+
+
+	)
 )
 
-(defun run() 
-(setq in-file (open "input.dat" :direction :input))
-(setq row (read in-file))
-(setq column (read in-file))
-(printboard row column)
-(close in-file)
+(defun printnumbers(lst num)
+	(cond
+		((eq lst nil) lst)
+		((eq num 0)(princ "  ")(princ (car lst))(printnumbers (cdr lst) (1+ num)))
+		(t (princ "    ")(princ (car lst)) (printnumbers (cdr lst) (1+ num)))
+	
+	)
+
 
 )
+
+
 
 (defun readfromfile()
 (setq in-file (open "input.dat" :direction :input))
 (setq row (read in-file))
 (setq column (read in-file))
-;(readfile in-file)
-;(setq mylst (createfinallist  in-file row column 'nil))
-;(princ mylst)
-(makemylist in-file row column 'nil)
+;(printboard row column in-file)
+(setq counterlist (makeemptylist row column))
+(princ counterlist)
 (close in-file)
 )
 
@@ -35,7 +51,7 @@
 	 (push (createlist in-file m nil) (cdr (last lst))) 
 			
 	)
-	(princ lst)
+	 lst
 )
 
 
@@ -47,24 +63,51 @@
    
 )
 
-#|
-(defun createfinallist(in-file n m  flst))
-(
-	(cond
-	((eq n 0) flst)	
-	((eq flst nil) (setq flst ( list ())) (createfinallist in-file n m flst))
-	(t (setq flst (append flst (list (setq mylist(createlist infile m 'nil ))))) (createfinallist infile (1-n) m flst) )
-	)
-)
-|#
 
 
 (defun createList(in-file m lst)
+	(setq cha (read in-file))
 	(cond
 		    ((eq m 0) lst)
-		    ((eq lst nil) (setq lst (list (read in-file))) (createlist in-file (1- m) lst))			
-		    (t (setq lst (append lst (list (read in-file)))) (createlist in-file (1- m) lst))
+		     ((eq cha 'eof) (princ "end of file reached"))
+		    ((eq lst nil) (setq lst (list cha)) (createlist in-file (1- m) lst))			
+		    (t (setq lst (append lst (list cha))) (createlist in-file (1- m) lst))
 		    
+	)
+	
+)
+
+(defun makeemptylist(n m)
+(setq lst (make-list m :initial-element '0))
+(setq emptylist (make-list n :initial-element lst))
+emptylist
+)
+
+(defun returnnth(n m lst)
+
+(setq sublst (nth n lst))
+(setq element (nth m sublst))
+element 
+
+)
+
+
+(defun increamentcounter(n m row column command couterlist)
+	
+	(setq counterlist (increamentposition n m counterlist))
+	(cond
+		((eq t (and (not(eq m 0)) (eq command 'l) )) (setq counterlist (increamentposition n (1- m) counterlist)))
+		;((and (not(eq m (1- column))) (eq command 'r)) (setq counterlist (increamentposition n (1+ m) counterlist)))
+		;((and (not (eq n 0)) ( eq command 'u)) (setq counterlist (increamentposition (1- n) m counterlist )))
+		;((and (not (eq n (1- row))) (eq command d)) (setq counterlist (increamentposition (1+ n) m counterlist)) )
+		(t counterlist)
+	
 	)
 )
 
+
+(defun increamentposition(n m lst)
+
+	(setf (nth m (nth n lst)) (1+ (nth m (nth n lst))) )
+	lst
+)
