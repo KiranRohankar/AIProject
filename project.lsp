@@ -42,7 +42,7 @@
 (defun printnumbers(lst num lar) "print numbers in the boxes"
 	(cond
 		((eq lst nil) lst)
-		((and (eq num 0) (eq (car lar) 'true)) (princ "|") (princ "  ")(princ (car lst))(printnumbers (cdr lst) (1+ num) (cdr lar)))
+		((and (eq num 0) (eq (car lar) 'true)) (princ "|") (princ "  ") (princ (car lst))(printnumbers (cdr lst) (1+ num) (cdr lar)))
 		((eq num 0) (princ "  ") (princ (car lst) ) (printnumbers (cdr lst) (1+ num) (cdr lar)))
 		((eq (car lar) 'true) (princ " ") (princ "|") (princ "  ") (princ (car lst)) (printnumbers (cdr lst) (1+ num) (cdr lar)))
 		((and (eq (cdr lst) nil) (eq (cdr lar ) 'true)) (princ "  ") (princ "|"))
@@ -56,7 +56,7 @@
 (terpri)
 (princ "1.Play 2 * 2")
 (terpri)
-(princ "2.Play 5 * 5")
+;(princ "2.Play 5 * 5")
 (terpri)
 (setq ch(read))
 
@@ -65,7 +65,16 @@
 )
 
 (defun initializetwo()
-
+(setq n 2)
+(setq m 2)
+(setq lst '((3 3)(* *)))
+(setq counter(doublelist nil 2 2))
+(setq lar(makelarwithpush 2 2 nil))
+(setq uad (makeuad 2 2 nil))
+(printboard 2 2 lst lar uad)
+(setq resultlar '((true false true) (false false false)))
+(setq resultuad '((true true)(true true)(false false)))
+(playgame n m lst lar uad resultlar resultuad)
 
 )
 
@@ -73,12 +82,12 @@
 
 (setq n 5)
 (setq m 5)
-(setq lst '((0 0 0 2 0)(2 3 2 0 2)(2 1 0 0 3)(0 1 2 0 3)(0 2 0 0 0)))
+(setq lst '((* * * 2 *)(2 3 2 * 2)(2 1 * * 3)(* 1 2 * 3)(* 2 * * *)))
 (setq counter(doublelist nil 5 5))
 (setq lar(makelarwithpush 5 5 nil))
 (setq uad (makeuad 5 5 nil))
 (printboard 5 5 lst lar uad)
-(playgame n m lst lar uad )
+(playgame n m lst lar uad lar uad)
 )
 
 (defun setcommandvalue(x y command lar uad)
@@ -94,7 +103,7 @@
 )
 
 
-(defun playgame(n m lst lar uad)
+(defun playgame(n m lst lar uad resultlar resultuad)
 (terpri)
 (princ "enter command in the form (Number Number l,r,u,d):")
 (terpri)
@@ -106,8 +115,23 @@
 (setcommandvalue x y command lar uad)
 (printboard n m lst lar uad)
 ;(princ lar)
-(playgame n m lst lar uad)
+(setq res(evaluateboard lar uad resultlar resultuad))
+
+	(cond
+		((eq res t)(terpri)(princ "you have solved the board!!!") )
+		(t (playgame n m  lst lar uad resultlar resultuad))
+	)
 )
+
+(defun evaluateboard(lar uad resultlar resultuad)
+	
+	(if (and (equal lar resultlar) (equal uad resultuad)) T)
+
+)
+
+
+
+
 
 (defun readfromfile()
 (setq in-file (open "input.dat" :direction :input))
