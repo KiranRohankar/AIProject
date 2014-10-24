@@ -16,10 +16,11 @@
 )
 
 
-(defun printcolumns(m) "prints default columns"
+(defun printcolumns(m uad) "prints default columns"
 	(loop for i from 0 to m do 
-		(princ "+")
-		(princ "    ")
+		(princ "+")(princ " ")
+		(if(eq (nth i uad) 'true) (princ "-- ")(princ " "))
+		(if (eq (nth i uad) 'false) (princ "  "))
 
 
 	)
@@ -27,7 +28,7 @@
 
 (defun printboard(n m lst lar uad) "prints the starting board as per list"
 	(loop for i from 0 to n do 
-		(printcolumns m)
+		(printcolumns m ( nth i uad))
 		(terpri)
 		(printnumbers (nth i lst)  0 (nth i lar))
 		(princ "  ")
@@ -86,7 +87,7 @@
 		((eq command 'r) (setf (nth (1+ y) (nth x lar) ) 'true ))
 		((eq command 'l) (setf (nth y (nth x lar)) 'true))
 		((eq command 'u) (setf (nth y (nth x uad)) 'true))
-		((eq command 'd) (setf (nth (1+ y) (nth x uad)) 'true))
+		((eq command 'd) (setf (nth y (nth (1+ x) uad)) 'true))
 		(t (terpri) (princ "invalid value")(terpri))
 	)
 
