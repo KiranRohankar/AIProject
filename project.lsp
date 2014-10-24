@@ -30,6 +30,8 @@
 		(printcolumns m)
 		(terpri)
 		(printnumbers (nth i lst)  0 (nth i lar))
+		(princ "  ")
+		 (if (eq(nth m  (nth i lar)) 'true) (princ "|"))
 		(terpri)
 
 
@@ -39,13 +41,12 @@
 (defun printnumbers(lst num lar) "print numbers in the boxes"
 	(cond
 		((eq lst nil) lst)
-	;	((eq (car lar) 'true) (princ "|"))
-		((eq num 0)(princ "  ")(princ (car lst))(printnumbers (cdr lst) (1+ num) lar))
-		(t (princ "    ")(princ (car lst)) (printnumbers (cdr lst) (1+ num) lar))
-	
+		((and (eq num 0) (eq (car lar) 'true)) (princ "|") (princ "  ")(princ (car lst))(printnumbers (cdr lst) (1+ num) (cdr lar)))
+		((eq num 0) (princ "  ") (princ (car lst) ) (printnumbers (cdr lst) (1+ num) (cdr lar)))
+		((eq (car lar) 'true) (princ " ") (princ "|") (princ "  ") (princ (car lst)) (printnumbers (cdr lst) (1+ num) (cdr lar)))
+		((and (eq (cdr lst) nil) (eq (cdr lar ) 'true)) (princ "  ") (princ "|"))
+		(t (princ "    ") (princ (car lst)) (printnumbers (cdr lst) (1+ num) (cdr lar)))
 	)
-
-
 )
 
 (defun start()"start of the program"
@@ -73,10 +74,10 @@
 (setq m 5)
 (setq lst '((0 0 0 2 0)(2 3 2 0 2)(2 1 0 0 3)(0 1 2 0 3)(0 2 0 0 0)))
 (setq counter(doublelist nil 5 5))
-(setq lar(makelar 5 5 nil))
+(setq lar(makelarwithpush 5 5 nil))
 (setq uad (makeuad 5 5 nil))
 (printboard 5 5 lst lar uad)
-(playgame n m lar uad )
+(playgame n m lst lar uad )
 )
 
 (defun setcommandvalue(x y command lar uad)
@@ -85,14 +86,14 @@
 		((eq command 'r) (setf (nth (1+ y) (nth x lar) ) 'true ))
 		((eq command 'l) (setf (nth y (nth x lar)) 'true))
 		((eq command 'u) (setf (nth y (nth x uad)) 'true))
-		((eq command 'u) (setf (nth (1+ y) (nth x uad)) 'true))
+		((eq command 'd) (setf (nth (1+ y) (nth x uad)) 'true))
 		(t (terpri) (princ "invalid value")(terpri))
 	)
 
 )
 
 
-(defun playgame(n m lar uad)
+(defun playgame(n m lst lar uad)
 (terpri)
 (princ "enter command in the form (Number Number l,r,u,d):")
 (terpri)
@@ -102,8 +103,9 @@
 (setq y (nth 1 ip))
 (setq command (nth 2 ip))
 (setcommandvalue x y command lar uad)
-
-
+(printboard n m lst lar uad)
+;(princ lar)
+(playgame n m lst lar uad)
 )
 
 (defun readfromfile()
@@ -214,7 +216,7 @@ element
 )
 
 (defun makelar(n m lst) "this creates double LAR list" 
-	
+       (princ lst)(princ "    ")(princ m)(princ "   ") (princ n)(terpri)	
 	(cond
 		((eq n 0) lst)
 		(t (setq ls(makesinglelar (1+ m) nil)) (setq lst (append lst (list ls))) (makelar (1- n) m lst) )
@@ -222,12 +224,22 @@ element
 	)
 
 )
+(defun makelarwithpush(n m lst)
+
+	(cond 
+		((eq n 0) lst)
+		(t (push (makesinglelar (1+ m) nil) lst) (makelarwithpush (1- n) m lst))
+		
+	)
+
+
+)
 (defun makesinglelar(m lst)"this creates single LAR list"
 
 	(cond
 		((eq m 0) lst)
-		((eq lst nil) (setq lst '(false)) (makesinglelar (1- m) lst) )
-		(t (push 'false lst) (makesinglelar (1- m) lst) )
+		;((eq lst nil) (setq lst '(false)) (makesinglelar (1- m) lst) )
+		(t (push 'false lst)(makesinglelar (1- m) lst) )
 	
 
 	)
